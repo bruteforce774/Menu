@@ -28,6 +28,18 @@ export class AppModel {
         menuItem.id = maxId + 1;
         this._state.menuItems.push(menuItem);
     }
+
+    // Slett kategori
+    public deleteCategory(category: string): void {
+        this._state.categories = this._state.categories.filter(cat => cat !== category);
+        // Optionally, also remove menu items in this category
+        this._state.menuItems = this._state.menuItems.filter(mi => mi.category !== category);
+    }
+
+    // Slett menyartikkel
+    public deleteMenuItem(id: number): void {
+        this._state.menuItems = this._state.menuItems.filter(mi => mi.id !== id);
+    }
 }
 
 export const appModel = new AppModel(initialAppState);
