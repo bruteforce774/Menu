@@ -2,7 +2,6 @@ import { BaseComponent } from "../components/BaseComponent";
 import type { Params, MenuCategoryParams, MenuItemParams } from "../types";
 import { router } from "../routerInstance";
 import { AdminView } from "./AdminView";
-customElements.define('admin-view', AdminView);
 
 export class RouterView extends BaseComponent {
   constructor() {
@@ -32,9 +31,23 @@ export class RouterView extends BaseComponent {
 
   render() {
     this.shadowRoot!.innerHTML = /*HTML*/ `
-      <h1>Meny</h1>
+      <header>
+        <h1>Meny</h1>
+        <nav>
+          <a href="#menu">Hovedside</a> |
+          <a href="#admin">Admin</a>
+        </nav>
+      </header>
       <main></main>
     `;
+    const nav = this.shadowRoot!.querySelector('nav');
+    nav?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'A' && target.getAttribute('href')) {
+        e.preventDefault();
+        router.navigate(target.getAttribute('href')!);
+      }
+    });
     router.handleRoute();
   }
 
