@@ -1,6 +1,8 @@
 import { BaseComponent } from "../components/BaseComponent";
 import type { Params, MenuCategoryParams, MenuItemParams } from "../types";
 import { router } from "../routerInstance";
+import { AdminView } from "./AdminView";
+customElements.define('admin-view', AdminView);
 
 export class RouterView extends BaseComponent {
   constructor() {
@@ -12,6 +14,7 @@ export class RouterView extends BaseComponent {
       .addRoute('#menu-item/:id', (params?: Params) => this.renderMenuItem(this.getMain(), params!))
       .addRoute('#add-category', (params?: Params) => this.renderAddCategory(this.getMain(), params!))
       .addRoute('#add-menu-item', (params?: Params) => this.renderAddMenuItem(this.getMain(), params!))
+      .addRoute('#admin', (params?: Params) => this.renderAdmin(this.getMain()))
       .setNotFound(() => {
         const main = this.getMain();
         const el = document.createElement('div');
@@ -20,6 +23,11 @@ export class RouterView extends BaseComponent {
         main.replaceChildren(el);
       })
       .build();
+  }
+
+  private renderAdmin(main: HTMLElement) {
+    const adminView = document.createElement('admin-view') as BaseComponent;
+    main.replaceChildren(adminView);
   }
 
   render() {
