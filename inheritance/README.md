@@ -5,7 +5,7 @@ This project demonstrates how to use inheritance with the `BaseComponent` class 
 ## Project Structure
 
 ```
-practice/
+inheritance/
 ├── src/
 │   ├── components/
 │   │   └── BaseComponent.ts    # Base class (from teacher's code)
@@ -23,7 +23,7 @@ practice/
 ## Setup
 
 ```bash
-cd practice
+cd inheritance
 npm install
 npm run dev
 ```
