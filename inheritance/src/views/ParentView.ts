@@ -1,23 +1,20 @@
 import { BaseComponent } from '../components/BaseComponent';
 
 /**
- * Example 4: Parent component that listens to child events
+ * Example 4: Simple parent-child communication (buttons, not forms)
  *
  * Key concepts:
- * - Parent manages state from multiple children
- * - Listens for custom events from child components
- * - Demonstrates data flow: Child → Event → Parent → State Update → Re-render
- * - Shows how to coordinate multiple components
+ * - Parent listens for events from multiple children
+ * - Children are simple buttons (no input fields)
+ * - Demonstrates CustomEvent communication without form complexity
+ * - No focus loss problem because there are no input fields!
+ *
+ * Note: For form inputs, see FormContainerView which handles the focus problem properly
  */
 export class ParentView extends BaseComponent {
   static props = [];
 
-  // Parent's state collected from children
-  private formData = {
-    firstName: '',
-    lastName: '',
-    email: ''
-  };
+  private messages: string[] = [];
 
   render() {
     this.shadowRoot!.innerHTML = `
@@ -33,71 +30,78 @@ export class ParentView extends BaseComponent {
           color: #9C27B0;
           margin-top: 0;
         }
-        .preview {
+        .buttons {
+          display: flex;
+          gap: 10px;
+          margin: 15px 0;
+        }
+        .messages {
           margin-top: 20px;
           padding: 15px;
           background: #F3E5F5;
           border-radius: 4px;
+          min-height: 100px;
         }
-        .preview h3 {
+        .messages h3 {
           margin-top: 0;
           color: #9C27B0;
         }
-        .preview p {
+        .message {
+          padding: 8px;
           margin: 5px 0;
-          color: #333;
+          background: white;
+          border-left: 3px solid #9C27B0;
+          border-radius: 2px;
+        }
+        .empty {
+          color: #999;
+          font-style: italic;
         }
       </style>
-      <h2>Parent Component (Form Container)</h2>
+      <h2>Parent Listening to Multiple Children</h2>
+      <p>Click the + buttons below. Parent receives events and displays messages.</p>
 
-      <input-view
-        label="First Name"
-        value="${this.formData.firstName}"
-        placeholder="Enter first name"
-      ></input-view>
+      <div class="buttons">
+        <counter-view label="Button A" initial-count="0"></counter-view>
+        <counter-view label="Button B" initial-count="10"></counter-view>
+        <counter-view label="Button C" initial-count="100"></counter-view>
+      </div>
 
-      <input-view
-        label="Last Name"
-        value="${this.formData.lastName}"
-        placeholder="Enter last name"
-      ></input-view>
-
-      <input-view
-        label="Email"
-        value="${this.formData.email}"
-        placeholder="Enter email"
-      ></input-view>
-
-      <div class="preview">
-        <h3>Live Preview (Parent's State):</h3>
-        <p><strong>Full Name:</strong> ${this.formData.firstName} ${this.formData.lastName}</p>
-        <p><strong>Email:</strong> ${this.formData.email || '(not provided)'}</p>
+      <div class="messages">
+        <h3>Events Received:</h3>
+        ${this.messages.length > 0 ?
+          this.messages.map(msg => `<div class="message">${msg}</div>`).join('') :
+          '<p class="empty">No events received yet. Click the buttons above!</p>'
+        }
       </div>
     `;
 
-    // Listen for custom events from all child input-view components
-    this.shadowRoot!.querySelectorAll('input-view')
-      .forEach(input => {
-        input.addEventListener('value-changed', this.handleValueChange.bind(this));
-      });
+    // This example intentionally uses CounterView (buttons)
+    // For form inputs, see FormContainerView which solves the focus problem
   }
 
-  private handleValueChange(event: Event) {
+  connectedCallback() {
+    super.connectedCallback();
+
+    // Listen for increment events from counter children
+    // Note: We listen at the parent level, not in render()
+    this.addEventListener('counter-incremented', this.handleCounterEvent.bind(this));
+  }
+
+  private handleCounterEvent(event: Event) {
     const customEvent = event as CustomEvent;
-    const { label, value } = customEvent.detail;
+    const { label, count } = customEvent.detail;
 
-    console.log(`Parent received event: ${label} = ${value}`);
+    const message = `${label} was incremented to ${count}`;
+    console.log(`Parent received: ${message}`);
 
-    // Update parent state based on which child sent the event
-    if (label === 'First Name') {
-      this.formData.firstName = value;
-    } else if (label === 'Last Name') {
-      this.formData.lastName = value;
-    } else if (label === 'Email') {
-      this.formData.email = value;
+    this.messages.unshift(message);
+
+    // Keep only last 5 messages
+    if (this.messages.length > 5) {
+      this.messages.pop();
     }
 
-    // Re-render to show updated state
     this.render();
   }
 }

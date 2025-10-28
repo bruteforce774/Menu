@@ -100,6 +100,16 @@ export class CounterView extends BaseComponent {
   private handleIncrement() {
     this.count++;
     this.render();  // Manually trigger re-render
+
+    // Dispatch custom event for parent to listen to
+    this.dispatchEvent(new CustomEvent('counter-incremented', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        label: this.label,
+        count: this.count
+      }
+    }));
   }
 
   private handleDecrement() {
