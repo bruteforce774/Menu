@@ -1,0 +1,59 @@
+function updateViewEdit() {
+  const tl   = model.inputs.edit.timeline;
+  const segs = tl.segments;
+
+  const rows = segs.map((seg, i) => /*HTML*/`
+      <tr>
+        <td style="width:60px;text-align:center">${seg.position}%</td>
+        <td>
+          <input type="text" value="${seg.label.replace(/"/g,'&quot;')}"
+                 oninput="model.inputs.edit.timeline.segments[${i}].label = this.value;">
+        </td>
+        <td class="actions">
+          <button onclick="moveSegmentUp(${i})"   title="Opp">▲</button>
+          <button onclick="moveSegmentDown(${i})" title="Ned">▼</button>
+          <button onclick="deleteSegment(${i})"   title="Slett">🗑️</button>
+        </td>
+      </tr>
+  `).join('');
+
+  document.getElementById('app').innerHTML = /*HTML*/`
+    <h1>Rediger tidslinje</h1>
+
+    <section style="margin-bottom:1rem;display:flex;gap:1.5rem;flex-wrap:wrap;">
+      <label>Tittel:<br>
+        <input type="text" value="${tl.title.replace(/"/g,'&quot;')}"
+               oninput="setTimelineTitle(this.value)" style="min-width:260px">
+      </label>
+
+      <label>Spor-farge:<br>
+        <input type="color" value="${tl.trackColor}"
+               onchange="setTimelineTrackColor(this.value)">
+      </label>
+
+      <label>Tekst-farge:<br>
+        <input type="color" value="${tl.textColor}"
+               onchange="setTimelineTextColor(this.value)">
+      </label>
+    </section>
+
+    <table class="edit-table">
+      <thead>
+        <tr><th>%</th><th>Tekst</th><th>Handlinger</th></tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+
+    <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+      <button onclick="addSegment()"    style="padding:.5rem 1rem;">
+        ➕ Legg til punkt
+      </button>
+      <button onclick="saveTimeline()"  style="padding:.5rem 1rem;">
+        💾 Lagre
+      </button>
+      <button onclick="discardChanges()" style="padding:.5rem 1rem;">
+        ❌ Forkast
+      </button>
+    </div>
+  `;
+}
