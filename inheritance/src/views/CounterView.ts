@@ -1,4 +1,5 @@
 import { BaseComponent } from '../components/BaseComponent';
+import type { CounterIncrementedDetail } from '../types';
 
 /**
  * Example 2: Interactive view with internal state
@@ -13,7 +14,7 @@ export class CounterView extends BaseComponent {
   static props = ['initial-count', 'label'];
 
   // Private internal state (not an attribute)
-  private count: number = 0;
+  private count: number | null = null;
 
   get initialCount(): number {
     return this.get('initial-count') || 0;
@@ -23,15 +24,11 @@ export class CounterView extends BaseComponent {
     return this.get('label') || 'Counter';
   }
 
-  // connectedCallback runs when component is added to DOM
-  connectedCallback() {
-    // Initialize count from attribute
-    this.count = this.initialCount;
-    // Call parent's connectedCallback (important!)
-    super.connectedCallback();
-  }
-
   render() {
+    // Initialize count on first render (teacher's pattern)
+    if (this.count === null) {
+      this.count = this.initialCount;
+    }
     this.shadowRoot!.innerHTML = `
       <style>
         :host {
@@ -98,17 +95,18 @@ export class CounterView extends BaseComponent {
   }
 
   private handleIncrement() {
-    this.count++;
+    this.count!++;
     this.render();  // Manually trigger re-render
 
     // Dispatch custom event for parent to listen to
+    const detail: CounterIncrementedDetail = {
+      label: this.label,
+      count: this.count!
+    };
     this.dispatchEvent(new CustomEvent('counter-incremented', {
       bubbles: true,
       composed: true,
-      detail: {
-        label: this.label,
-        count: this.count
-      }
+      detail
     }));
   }
 
