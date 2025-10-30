@@ -1,5 +1,4 @@
 import { BaseComponent } from '../components/BaseComponent';
-import type { CounterIncrementedEvent } from '../types';
 
 /**
  * Example 4: Simple parent-child communication (buttons, not forms)
@@ -85,7 +84,7 @@ export class ParentView extends BaseComponent {
   }
 
   private handleCounterEvent(event: Event) {
-    const customEvent = event as CounterIncrementedEvent;
+    const customEvent = event as CustomEvent;
     const { label, count } = customEvent.detail;
 
     const message = `${label} was incremented to ${count}`;

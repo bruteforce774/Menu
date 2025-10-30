@@ -1,5 +1,4 @@
 import { BaseComponent } from '../components/BaseComponent';
-import type { CounterIncrementedDetail } from '../types';
 
 /**
  * Example 2: Interactive view with internal state
@@ -98,15 +97,14 @@ export class CounterView extends BaseComponent {
     this.count!++;
     this.render();  // Manually trigger re-render
 
-    // Dispatch custom event for parent to listen to
-    const detail: CounterIncrementedDetail = {
-      label: this.label,
-      count: this.count!
-    };
+    // Dispatch custom event for parent to listen to (teacher's pattern: inline detail)
     this.dispatchEvent(new CustomEvent('counter-incremented', {
       bubbles: true,
       composed: true,
-      detail
+      detail: {
+        label: this.label,
+        count: this.count!
+      }
     }));
   }
 

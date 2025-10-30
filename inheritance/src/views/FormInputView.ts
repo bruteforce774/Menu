@@ -1,5 +1,4 @@
 import { BaseComponent } from '../components/BaseComponent';
-import type { ValueSubmittedDetail } from '../types';
 
 /**
  * Example 3: Proper form input handling (Teacher's pattern)
@@ -88,15 +87,14 @@ export class FormInputView extends BaseComponent {
   }
 
   private handleSubmit() {
-    // Use the stored value from instance property
-    const detail: ValueSubmittedDetail = {
-      label: this.label,
-      value: this.currentValue
-    };
+    // Use the stored value from instance property (teacher's pattern: inline detail)
     this.dispatchEvent(new CustomEvent('value-submitted', {
       bubbles: true,
       composed: true,
-      detail
+      detail: {
+        label: this.label,
+        value: this.currentValue
+      }
     }));
 
     console.log(`${this.label} submitted: ${this.currentValue}`);

@@ -1,5 +1,4 @@
 import { BaseComponent } from '../components/BaseComponent';
-import type { FormData, ValueSubmittedEvent } from '../types';
 
 /**
  * Example 4: Form container with proper state management
@@ -16,7 +15,7 @@ export class FormContainerView extends BaseComponent {
   static props = [];
 
   // Parent's state - only updated when children submit
-  private formData: FormData = {
+  private formData = {
     firstName: '',
     lastName: '',
     email: ''
@@ -93,7 +92,7 @@ export class FormContainerView extends BaseComponent {
   }
 
   private handleValueSubmitted(event: Event) {
-    const customEvent = event as ValueSubmittedEvent;
+    const customEvent = event as CustomEvent;
     const { label, value } = customEvent.detail;
 
     console.log(`Container received: ${label} = ${value}`);
