@@ -1,4 +1,5 @@
 import { BaseComponent } from '../components/BaseComponent';
+import type { CounterIncrementedEvent } from '../types';
 
 /**
  * Example 4: Simple parent-child communication (buttons, not forms)
@@ -76,20 +77,15 @@ export class ParentView extends BaseComponent {
       </div>
     `;
 
-    // This example intentionally uses CounterView (buttons)
-    // For form inputs, see FormContainerView which solves the focus problem
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    // Listen for increment events from counter children
-    // Note: We listen at the parent level, not in render()
-    this.addEventListener('counter-incremented', this.handleCounterEvent.bind(this));
+    // Listen for events from child counter components (teacher's pattern)
+    this.shadowRoot!.querySelectorAll('counter-view')
+      .forEach(counter => {
+        counter.addEventListener('counter-incremented', this.handleCounterEvent.bind(this));
+      });
   }
 
   private handleCounterEvent(event: Event) {
-    const customEvent = event as CustomEvent;
+    const customEvent = event as CounterIncrementedEvent;
     const { label, count } = customEvent.detail;
 
     const message = `${label} was incremented to ${count}`;

@@ -1,4 +1,5 @@
 import { BaseComponent } from '../components/BaseComponent';
+import type { ValueChangedDetail } from '../types';
 
 /**
  * Example 3: Form input with custom events (child-to-parent communication)
@@ -71,14 +72,15 @@ export class InputView extends BaseComponent {
     const input = event.target as HTMLInputElement;
 
     // Dispatch custom event that parent can listen to
+    const detail: ValueChangedDetail = {
+      label: this.label,
+      value: input.value,
+      timestamp: new Date().toISOString()
+    };
     this.dispatchEvent(new CustomEvent('value-changed', {
       bubbles: true,      // Event bubbles up through DOM
       composed: true,     // Event crosses shadow DOM boundary
-      detail: {
-        label: this.label,
-        value: input.value,
-        timestamp: new Date().toISOString()
-      }
+      detail
     }));
   }
 }
